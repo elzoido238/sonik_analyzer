@@ -1,0 +1,4 @@
+*.so
+*.dylib
+*.o
+*Dict.*

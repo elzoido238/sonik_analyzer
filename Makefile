@@ -18,27 +18,33 @@ CXXFLAGS 	+= $(FPIC)
 LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
+LIBDIR		:= lib
+CINTDIR		:= cint
+OBJDIR		:= obj
+
 DICT      	:= SonikFitDict.$(SrcSuf)
+DICT		:= $(addprefix $(CINTDIR)/,$(DICT))
 DICTH     	:= $(DICT:.$(SrcSuf)=.h)
+DICTH		:= $(addprefix $(CINTDIR)/,$(DICTH))
 DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
+DICTO		:= $(addprefix $(OBJDIR)/,$(DICT))
 
 SRCS      	:= $(wildcard *.$(SrcSuf))
 
-HDRS      	:= $(SRCS:.$(SrcSuf)=.h) LinkDef.h
+HDRS      	:= $(SRCS:.$(SrcSuf)=.h) $(CINTDIR)/LinkDef.h
 HDRS      	:= $(filter-out $(DICTH),$(HDRS))
 
 SHLIB     	:= libSonikFit.$(DllSuf)
+DYLIB     	:= libSonikFit.dylib
 
 OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
-OBJDIR      := obj
 
 ############# RULES ###############
-
 .$(SrcSuf).$(ObjSuf):
 	$(CXX) $(CXXFLAGS) -c $<
 
-############# TARGETS #############
 
+############# TARGETS #############
 .SUFFIXES: .$(SrcSuf) .$(ObjSuf) $(ExeSuf) .$(DllSuf)
 
 all:    $(SHLIB)
@@ -48,14 +54,13 @@ $(DICT): $(HDRS)
 	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^
 
 $(SHLIB): $(DICTO) $(OBJS)
-ifeq ($(PLATFORM),macosx)
-	$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@ $(GLIBS)
-else
 	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(GLIBS) $(OutPutOpt) $@
-endif
+
+dylib: $(DICTO) $(OBJS) $(SHLIB)
+	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $(DYLIB)
 
 distclean: clean
-	@rm -f $(SHLIB) $(OBJS) $(DICT) $(DICTO) $(DICTH)
+	@rm -f $(SHLIB) $(DYLIB) $(OBJS) $(DICT) $(DICTO) $(DICTH)
 
 clean:
-	@rm -f $(SHLIB) $(OBJS) $(DICT) $(DICTO) $(DICTH)
+	@rm -f $(SHLIB) $(DYLIB) $(OBJS) $(DICT) $(DICTO) $(DICTH)

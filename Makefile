@@ -15,7 +15,7 @@ ODIR        := obj
 CINTDIR     := cint
 LDIR        := lib
 
-DICT      	:= SonikFitDict.$(SrcSuf)
+DICT      	:= SonikDict.$(SrcSuf)
 DICTH     	:= $(DICT:.$(SrcSuf)=.h)
 DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
 
@@ -27,16 +27,16 @@ SRCS      	:= $(wildcard *.$(SrcSuf))
 SRCS		:= $(addprefix $(SDIR)/,$(SRCS))
 
 HDRS      	:= $(SRCS:.$(SrcSuf)=.h)
-#HDRS      	:= $(filter-out $(DICTH),$(HDRS))
+HDRS		:= $(addprefix $(SDIR)/,$(HDRS))
 
-SHLIB     	:= $(LDIR)/libSonikFit.$(DllSuf)
-DYLIB     	:= $(LDIR)/libSonikFit.dylib
+SHLIB     	:= $(LDIR)/libSonik.$(DllSuf)
+DYLIB     	:= $(LDIR)/libSonik.dylib
 
 OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
 OBJS 		:= $(addprefix $(ODIR)/,$(OBJS))
 
 FPIC  		 = -fPIC
-ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
+ROOFITLIBS 	 = -lRooStats -lRooFit -lRooFitCore -lMinuit
 
 CXXFLAGS 	+= $(DEBUG) -v
 CXXFLAGS 	+= $(FPIC)
@@ -44,14 +44,10 @@ LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
 ############# RULES ###############
-# .$(SrcSuf).$(ObjSuf):
-# 	$(CXX) $(CXXFLAGS) -c $<
 
-$(ODIR)/%.o: $(SRCS) $(HDRS)
-	$(CXX) $(CXXFLAGS) -c $<
-
-$(DICTO): $(DICT) $(DICTH)
-	$(CXX) $(CXXFLAGS) -c $<
+## Must be last object rule!
+$(ODIR)/%.o: $(SRCS) $(DICT)
+	$(CXX) $(CXXFLAGS) -c $(OutPutOpt) $@ $<
 
 ############# TARGETS #############
 .SUFFIXES: .$(SrcSuf) .$(ObjSuf) $(ExeSuf) .$(DllSuf)
@@ -60,7 +56,7 @@ all:    $(SHLIB)
 
 $(DICT): $(HDRS) $(CINTDIR)/LinkDef.h
 	@echo "Generating dictionary $@..."
-	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^
+	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^ $(HDRS)
 
 $(SHLIB): $(DICTO) $(OBJS)
 	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(GLIBS) $(OutPutOpt) $@

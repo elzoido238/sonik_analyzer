@@ -23,15 +23,16 @@ CINTDIR		:= cint
 OBJDIR		:= obj
 
 DICT      	:= SonikFitDict.$(SrcSuf)
-DICT		:= $(addprefix $(CINTDIR)/,$(DICT))
 DICTH     	:= $(DICT:.$(SrcSuf)=.h)
-DICTH		:= $(addprefix $(CINTDIR)/,$(DICTH))
 DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
-DICTO		:= $(addprefix $(OBJDIR)/,$(DICT))
+
+# DICT		:= $(addprefix cint/,$(DICT))
+# DICTH		:= $(addprefix cint/,$(DICTH))
+# DICTO		:= $(addprefix obj/,$(DICTO))
 
 SRCS      	:= $(wildcard *.$(SrcSuf))
 
-HDRS      	:= $(SRCS:.$(SrcSuf)=.h) $(CINTDIR)/LinkDef.h
+HDRS      	:= $(SRCS:.$(SrcSuf)=.h) cint/LinkDef.h
 HDRS      	:= $(filter-out $(DICTH),$(HDRS))
 
 SHLIB     	:= libSonikFit.$(DllSuf)

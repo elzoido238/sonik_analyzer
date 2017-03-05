@@ -38,7 +38,7 @@ OBJS 		:= $(addprefix $(ODIR)/,$(OBJS))
 FPIC  		 = -fPIC
 ROOFITLIBS 	 = -lRooStats -lRooFit -lRooFitCore -lMinuit
 
-CXXFLAGS 	+= $(DEBUG) -v
+CXXFLAGS 	+= $(DEBUG)
 CXXFLAGS 	+= $(FPIC)
 LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
@@ -56,7 +56,7 @@ all:    $(SHLIB)
 
 $(DICT): $(HDRS) $(CINTDIR)/LinkDef.h
 	@echo "Generating dictionary $@..."
-	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^ $(HDRS)
+	$(ROOTCINT) -f $@ -c $(CXXFLAGS) $^
 
 $(SHLIB): $(DICTO) $(OBJS)
 	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(GLIBS) $(OutPutOpt) $@

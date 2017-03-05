@@ -30,6 +30,14 @@
 #pragma link off all functions;
 #pragma link C++ nestedclasses;
 
+class TObject;
+class TH1;
+#pragma link C++ function SonikFit::ArgBG(TH1D* hh, Double_t, Double_t, Double_t, Double_t*, Bool_t);
+#pragma link C++ function SonikFit::Exp_3HeBG(TH1D* hh, Double_t, Double_t, Double_t*, Bool_t);
+#pragma link C++ function SonikFit::ExpBG(TH1D* hh, Double_t, Double_t, Double_t, Double_t*, Bool_t);
+#pragma link C++ function SonikFit::LandauBG(TH1D* hh, Double_t, Double_t, Double_t, Double_t*, Bool_t);
+#pragma link C++ function SonikFit::L_ArgBG(TH1D* hh, Double_t, Double_t, Double_t, Double_t, Double_t*, Bool_t);
+
 #pragma link C++ class SonikFit+;
 //#pragma link C++ class sonik::Gainmatch+;
 //#pragma link C++ class sonik::SonikCal+;

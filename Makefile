@@ -10,6 +10,31 @@ else
 	include $(ROOTSYS)/etc/Makefile.arch
 endif
 
+SDIR        := src
+ODIR        := obj
+CINTDIR     := cint
+LDIR        := lib
+
+DICT      	:= SonikFitDict.$(SrcSuf)
+DICTH     	:= $(DICT:.$(SrcSuf)=.h)
+DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
+
+DICT		:= $(addprefix $(CINTDIR)/,$(DICT))
+DICTH		:= $(addprefix $(CINTDIR)/,$(DICTH))
+DICTO		:= $(addprefix $(ODIR)/,$(DICTO))
+
+SRCS      	:= $(wildcard *.$(SrcSuf))
+SRCS		:= $(addprefix $(SDIR)/,$(SRCS))
+
+HDRS      	:= $(SRCS:.$(SrcSuf)=.h)
+#HDRS      	:= $(filter-out $(DICTH),$(HDRS))
+
+SHLIB     	:= $(LDIR)/libSonikFit.$(DllSuf)
+DYLIB     	:= $(LDIR)/libSonikFit.dylib
+
+OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
+OBJS 		:= $(addprefix $(ODIR)/,$(OBJS))
+
 FPIC  		 = -fPIC
 ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
 
@@ -18,39 +43,22 @@ CXXFLAGS 	+= $(FPIC)
 LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
-LIBDIR		:= lib
-CINTDIR		:= cint
-OBJDIR		:= obj
-
-DICT      	:= SonikFitDict.$(SrcSuf)
-DICTH     	:= $(DICT:.$(SrcSuf)=.h)
-DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
-
-# DICT		:= $(addprefix cint/,$(DICT))
-# DICTH		:= $(addprefix cint/,$(DICTH))
-# DICTO		:= $(addprefix obj/,$(DICTO))
-
-SRCS      	:= $(wildcard *.$(SrcSuf))
-
-HDRS      	:= $(SRCS:.$(SrcSuf)=.h) cint/LinkDef.h
-HDRS      	:= $(filter-out $(DICTH),$(HDRS))
-
-SHLIB     	:= libSonikFit.$(DllSuf)
-DYLIB     	:= libSonikFit.dylib
-
-OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
-
 ############# RULES ###############
-.$(SrcSuf).$(ObjSuf):
+# .$(SrcSuf).$(ObjSuf):
+# 	$(CXX) $(CXXFLAGS) -c $<
+
+$(ODIR)/%.o: $(SRCS) $(HDRS)
 	$(CXX) $(CXXFLAGS) -c $<
 
+$(DICTO): $(DICT) $(DICTH)
+	$(CXX) $(CXXFLAGS) -c $<
 
 ############# TARGETS #############
 .SUFFIXES: .$(SrcSuf) .$(ObjSuf) $(ExeSuf) .$(DllSuf)
 
 all:    $(SHLIB)
 
-$(DICT): $(HDRS)
+$(DICT): $(HDRS) $(CINTDIR)/LinkDef.h
 	@echo "Generating dictionary $@..."
 	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^
 

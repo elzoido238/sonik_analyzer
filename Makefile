@@ -10,7 +10,9 @@ else
 	include $(ROOTSYS)/etc/Makefile.arch
 endif
 
-FPIC  		 = -fPIC
+ODIR		:= obj
+
+FPIC		 = -fPIC
 ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
 
 CXXFLAGS 	+= $(DEBUG) -v
@@ -30,7 +32,6 @@ HDRS      	:= $(filter-out $(DICTH),$(HDRS))
 SHLIB     	:= libSonikFit.$(DllSuf)
 
 OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
-OBJDIR      := obj
 
 ############# RULES ###############
 

@@ -45,13 +45,13 @@ public:
   RooFitResult* Exp_3HeBG(TH1D* hh, Double_t peak3, Double_t lambda0, Double_t* range, Bool_t DrawFlag = kTRUE);
   RooFitResult* ExpBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t lambda0, Double_t* range, Bool_t DrawFlag = kTRUE);
   RooFitResult* LandauBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t* range, Bool_t DrawFlag = kTRUE);
-  RooFitResult* L_ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t cutoff, Double_t* range, Bool_t DrawFlag = kTRUE);
+  RooFitResult* L_ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t cutoff, Bool_t DrawFlag = kTRUE);
 
 private:
   void DrawFrame(RooDataHist dh,RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooArgusBG bg, Double_t* range);
   void DrawFrame(RooDataHist dh,RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooExponential bg, Double_t* range);
   void DrawFrame(RooDataHist dh,RooRealVar x, RooAddPdf model, RooGaussian he3, RooExponential bg, Double_t* range);
-  void DrawFrame(RooDataHist dh,RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooAddPdf bg, Double_t* range);
+  void DrawFrame(RooDataHist dh,RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooAddPdf bg);
   void DrawFrame(RooDataHist dh,RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooLandau bg, Double_t* range);
   void SetVars(char* title, Int_t Nevents, Double_t binning);
 

@@ -185,11 +185,10 @@ RooFitResult* SonikFit::LandauBG(TH1D* hh, Double_t peak3, Double_t peak4, Doubl
 }
 
 
-RooFitResult* SonikFit::L_ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t cutoff, Double_t* range, Bool_t DrawFlag)
+RooFitResult* SonikFit::L_ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t cutoff, Bool_t DrawFlag)
 {
   // construct variable
   RooRealVar x("x","x",0,4);
-  x.setRange("Rmodel",range[0],range[1]);
 
   // Create a binned dataset that imports contents of TH1 and associates its contents to observable 'x'
   RooDataHist dh("dh","dh",x,Import(*hh));
@@ -225,12 +224,12 @@ RooFitResult* SonikFit::L_ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double
 
   // P r i n t   r e s u l t   a n d   r e t u r n   r e s u l t   p o i n t e r
   // -----------------------------------------------------------------------------------------------
-	RooFitResult* result = model.fitTo(dh, Range("Rmodel"), Extended(), Save());
+	RooFitResult* result = model.fitTo(dh, Extended(), Save());
 
 	result->Print();
 
   if(DrawFlag){
-    DrawFrame(dh, x, model, he3, he4, bg, range);
+    DrawFrame(dh, x, model, he3, he4, bg);
   }
 
 	return(result);
@@ -338,7 +337,7 @@ void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGauss
 }
 
 
-void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooAddPdf bg, Double_t* range)
+void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooAddPdf bg)
 {
   // Make plot of binned dataset showing Poisson error bars (RooFit default)
   RooPlot *frame = x.frame(Title(fTitle));
@@ -355,7 +354,7 @@ void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGauss
   sprintf(ytitle,"Events / %.4g [keV]",1e3*fBinning);
 
   TCanvas *c2 = new TCanvas();
-  frame->GetXaxis()->CenterTitle(); frame->GetXaxis()->SetRangeUser(range[0], range[1]); frame->GetYaxis()->SetRangeUser(1,2e6); frame->GetYaxis()->CenterTitle(); frame->GetXaxis()->SetTitle("Energy [MeV]"); frame->GetYaxis()->SetTitle(ytitle);
+  frame->GetXaxis()->CenterTitle(); frame->GetYaxis()->SetRangeUser(1,2e6); frame->GetYaxis()->CenterTitle(); frame->GetXaxis()->SetTitle("Energy [MeV]"); frame->GetYaxis()->SetTitle(ytitle);
   c2->SetLogy(kTRUE);
   frame->Draw();
 

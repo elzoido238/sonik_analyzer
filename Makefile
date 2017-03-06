@@ -10,10 +10,10 @@ else
 	include $(ROOTSYS)/etc/Makefile.arch
 endif
 
-ODIR		:= obj
-LDIR		:= lib
-CINT		:= cint
-SDIR		:= src
+ODIR		:= $(PWD)/obj
+LDIR		:= $(PWD)/lib
+CINT		:= $(PWD)/cint
+SDIR		:= $(PWD)/src
 
 FPIC		 = -fPIC
 ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
@@ -23,14 +23,18 @@ CXXFLAGS 	+= $(FPIC)
 LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
-DICT      	:= SonikFitDict.$(SrcSuf)
+DICT      	:= SonikDict.$(SrcSuf)
 DICTH     	:= $(DICT:.$(SrcSuf)=.h)
 DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
+
+# DICT      	:= $(addprefix $(CINT)/,$(DICT))
+# DICTH     	:= $(addprefix $(CINT)/,$(DICTH))
+# DICTO     	:= $(addprefix $(CINT)/,$(DICTO))
 
 SRCS      	:= $(wildcard *.$(SrcSuf))
 # SRCS		:= $(addprefix $(SDIR)/,$(SRCS))
 
-HDRS      	:= $(SRCS:.$(SrcSuf)=.h)
+HDRS      	:= $(PWD)/SonikFit.h #$(SRCS:.$(SrcSuf)=.h)
 HDRS      	:= $(filter-out $(DICTH),$(HDRS))
 LINKDEF		:= $(CINT)/LinkDef.h
 
@@ -40,12 +44,10 @@ OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
 
 ############# RULES ###############
 
-.$(SrcSuf).$(ObjSuf):
-	$(CXX) $(CXXFLAGS) -c $<
+%.$(ObjSuf): %.$(SrcSuf)
+	$(CXX) $(CXXFLAGS) -c $(OutPutOpt) $@ $<
 
 ############# TARGETS #############
-
-.SUFFIXES: .$(SrcSuf) .$(ObjSuf) $(ExeSuf) .$(DllSuf)
 
 all:    $(SHLIB)
 

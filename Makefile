@@ -10,47 +10,47 @@ else
 	include $(ROOTSYS)/etc/Makefile.arch
 endif
 
-ODIR		:= $(PWD)/obj
-LDIR		:= $(PWD)/lib
-CINT		:= $(PWD)/cint
-SDIR		:= $(PWD)/src
-
 FPIC		 = -fPIC
 ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
+INCLUDE		+= -I$(PWD)/include
 
-CXXFLAGS 	+= $(DEBUG) -v
-CXXFLAGS 	+= $(FPIC)
+CXXFLAGS 	+= $(DEBUG) -v $(FPIC) $(INCLUDE)
 LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
-DICT      	:= SonikDict.$(SrcSuf)
-DICTH     	:= $(DICT:.$(SrcSuf)=.h)
-DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
+BUILD		:= $(PWD)/build
+LDIR		:= $(PWD)/lib
+CINT		:= $(PWD)/cint
+SDIR		:= $(PWD)/src
+HDIR		:= $(PWD)/include
 
-# DICT      	:= $(addprefix $(CINT)/,$(DICT))
-# DICTH     	:= $(addprefix $(CINT)/,$(DICTH))
-# DICTO     	:= $(addprefix $(CINT)/,$(DICTO))
+SRCEXT		:= cxx
+SRCS      	:= $(shell find $(SDIR) -type f -name *.$(SRCEXT))
+OBJS      	:= $(patsubst $(SDIR)/%, $(BUILD)/%, $(SRCS:.$(SRCEXT)=.o))
+HDRS      	:= $(patsubst $(SDIR)/%, $(HDIR)/%, $(SRCS:.$(SRCEXT)=.h))
 
-SRCS      	:= $(wildcard *.$(SrcSuf))
-# SRCS		:= $(addprefix $(SDIR)/,$(SRCS))
-
-HDRS      	:= $(PWD)/SonikFit.h #$(SRCS:.$(SrcSuf)=.h)
-HDRS      	:= $(filter-out $(DICTH),$(HDRS))
 LINKDEF		:= $(CINT)/LinkDef.h
 
-SHLIB     	:= $(LDIR)/libSonik.$(DllSuf)
+SHLIB     	:= $(LDIR)/libSonik.so
 
-OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
+DICT      	:= SonikDict.cxx
+DICTH     	:= $(patsubst %.cxx, %.h, $(DICT))
+DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
 
-############# RULES ###############
-
-%.$(ObjSuf): %.$(SrcSuf)
-	$(CXX) $(CXXFLAGS) -c $(OutPutOpt) $@ $<
+DICT      	:= $(addprefix $(CINT)/,$(DICT))
+DICTH     	:= $(addprefix $(CINT)/,$(DICTH))
+DICTO     	:= $(addprefix $(BUILD)/,$(DICTO))
 
 ############# TARGETS #############
+all: $(OBJS) $(SHLIB)
 
-all:    $(SHLIB)
+$(BUILD)/%.o: $(SDIR)/%.cxx
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+$(DICTO): $(DICT)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+######## CINT DICTIONARY ##########
 $(DICT): $(HDRS) $(LINKDEF)
 	@echo "Generating dictionary $@..."
 	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^
@@ -63,7 +63,7 @@ else
 endif
 
 distclean: clean
-	@rm -f $(SHLIB) $(OBJS) $(DICT) $(DICTO) $(DICTH)
+	@rm -f $(SHLIB) $(BUILD)/* $(DICT) $(DICTO) $(DICTH)
 
 clean:
-	@rm -f $(SHLIB) $(OBJS) $(DICT) $(DICTO) $(DICTH)
+	@rm -f $(SHLIB) $(BUILD)/* $(DICT) $(DICTO) $(DICTH)

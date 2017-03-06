@@ -35,24 +35,24 @@
 //#pragma link C++ class sonik::SonikCal+;
 //#pragma link C++ defined_in ../include/SonikFit.hxx;
 
-class RooArgusBG;
-class RooExponential;
-class RooGaussian;
-class RooLandau;
-class RooAddPdf;
-class RooPlot;
-class RooDataHist;
-class RooFitResult;
-class RooArgSet;
-class RooConstVar;
-class RooRealVar;
-class RooArgList;
-class TH1;
-class TF1;
-class TF2;
-class TF3;
-class TTree;
-class TObject;
+// class RooArgusBG;
+// class RooExponential;
+// class RooGaussian;
+// class RooLandau;
+// class RooAddPdf;
+// class RooPlot;
+// class RooDataHist;
+// class RooFitResult;
+// class RooArgSet;
+// class RooConstVar;
+// class RooRealVar;
+// class RooArgList;
+// class TH1;
+// class TF1;
+// class TF2;
+// class TF3;
+// class TTree;
+// class TObject;
 
 
 #endif

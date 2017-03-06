@@ -11,6 +11,9 @@ else
 endif
 
 ODIR		:= obj
+LDIR		:= lib
+CINT		:= cint
+SDIR		:= src
 
 FPIC		 = -fPIC
 ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
@@ -25,11 +28,13 @@ DICTH     	:= $(DICT:.$(SrcSuf)=.h)
 DICTO     	:= $(DICT:.$(SrcSuf)=.$(ObjSuf))
 
 SRCS      	:= $(wildcard *.$(SrcSuf))
+# SRCS		:= $(addprefix $(SDIR)/,$(SRCS))
 
-HDRS      	:= $(SRCS:.$(SrcSuf)=.h) LinkDef.h
+HDRS      	:= $(SRCS:.$(SrcSuf)=.h)
 HDRS      	:= $(filter-out $(DICTH),$(HDRS))
+LINKDEF		:= $(CINT)/LinkDef.h
 
-SHLIB     	:= libSonikFit.$(DllSuf)
+SHLIB     	:= $(LDIR)/libSonik.$(DllSuf)
 
 OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
 
@@ -44,7 +49,7 @@ OBJS      	:= $(SRCS:.$(SrcSuf)=.$(ObjSuf))
 
 all:    $(SHLIB)
 
-$(DICT): $(HDRS)
+$(DICT): $(HDRS) $(LINKDEF)
 	@echo "Generating dictionary $@..."
 	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^
 

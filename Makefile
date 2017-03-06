@@ -50,6 +50,11 @@ $(BUILD)/%.o: $(SDIR)/%.cxx
 $(DICTO): $(DICT)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+$(OBJS): | $(ODIR)
+
+$(ODIR):
+	mkdir $(ODIR)
+
 ######## CINT DICTIONARY ##########
 $(DICT): $(HDRS) $(LINKDEF)
 	@echo "Generating dictionary $@..."
@@ -61,6 +66,8 @@ ifeq ($(PLATFORM),macosx)
 else
 	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(GLIBS) $(OutPutOpt) $@
 endif
+
+.PHONY: clean
 
 distclean: clean
 	@rm -f $(SHLIB) $(BUILD)/* $(DICT) $(DICTO) $(DICTH)

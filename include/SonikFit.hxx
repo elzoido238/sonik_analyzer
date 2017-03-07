@@ -9,27 +9,9 @@
 #include <iostream>
 #endif
 
-#include <vector>
-#include <cstdio>
-#include <cstring>
-#include <sstream>
-
 #include "TH1.h"
 #include "TCanvas.h"
-#include "TFitResult.h"
-#include "TVectorD.h"
-#include "TVectorT.h"
-#include "Riostream.h"
-#include "TString.h"
-#include "TLatex.h"
-#include "TLeaf.h"
-#include "TBranch.h"
-#include "TTree.h"
-#include "TChain.h"
 #include "TObject.h"
-#include "TFile.h"
-#include "TMath.h"
-#include "TSystem.h"
 
 
 #ifndef __CINT__
@@ -54,23 +36,7 @@ using namespace RooFit;
 class RooFitResult;
 class TObject;
 
-namespace sonik {
-
-
-const char* runfile = "${DH}/data/rootfiles/run%i.root";
-const char* gainfile = "{DH}/data/rootfiles/gainmatch.root";
-const Int_t Nbins = pow(2.0,12);
-
-class SonikCal{ //class for sonik data
-public:
-  SonikCal();
-
-public:
-	Double_t gainmatched[MAX_CHANNELS];  //#
-	Double_t ecal[MAX_CHANNELS];         //#
-
-	ClassDef(Sonikcal,1)
-};
+//namespace sonik {
 
 class SonikFit : public TObject {
 public:
@@ -101,6 +67,6 @@ private:
 };
 
 
-} // namespace sonik
+//} // namespace sonik
 
 #endif

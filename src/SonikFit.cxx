@@ -4,12 +4,13 @@
 /// 02/2017 - Devin Connolly                     ///
 ////////////////////////////////////////////////////
 
-#include "SonikFit.h"
+#include "SonikFit.hxx"
 ClassImp(SonikFit);
+
 
 //==================== Class SonikFit ====================//
 
-SonikFit::SonikFit(char* title, Int_t Nevents, Double_t binning)
+SonikFit(const char* title, Int_t Nevents, Double_t binning)
 {
   SetVars(title, Nevents, binning);
 }
@@ -361,7 +362,7 @@ void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGauss
 }
 
 
-void SonikFit::SetVars(char* title, Int_t Nevents, Double_t binning)
+void SonikFit::SetVars(const char* title, Int_t Nevents, Double_t binning)
 {
   fTitle   = title;
   fNevents = Nevents;

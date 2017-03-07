@@ -27,7 +27,7 @@ HDIR		:= $(PWD)/include
 SRCEXT		:= cxx
 SRCS      	:= $(shell find $(SDIR) -type f -name *.$(SRCEXT))
 OBJS      	:= $(patsubst $(SDIR)/%, $(BUILD)/%, $(SRCS:.$(SRCEXT)=.o))
-HDRS      	:= $(patsubst $(SDIR)/%, $(HDIR)/%, $(SRCS:.$(SRCEXT)=.h))
+HDRS      	:= $(patsubst $(SDIR)/%, $(HDIR)/%, $(SRCS:.$(SRCEXT)=.hxx))
 
 LINKDEF		:= $(CINT)/LinkDef.h
 

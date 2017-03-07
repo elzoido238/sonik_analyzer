@@ -1,4 +1,6 @@
-*.so
-*.dylib
-*.o
+# ignore files created by make
+lib/*
+build
 *Dict.*
+# ignore Mac files
+.DS_Store

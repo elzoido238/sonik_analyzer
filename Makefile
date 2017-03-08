@@ -55,12 +55,15 @@ $(OBJS): | $(ODIR)
 $(ODIR):
 	mkdir $(ODIR)
 
+$(LDIR):
+	mkdir $(LDIR)
+
 ######## CINT DICTIONARY ##########
 $(DICT): $(HDRS) $(LINKDEF)
 	@echo "Generating dictionary $@..."
 	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^
 
-$(SHLIB): $(DICTO) $(OBJS)
+$(SHLIB): $(DICTO) $(OBJS) | $(LDIR)
 ifeq ($(PLATFORM),macosx)
 	$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@ $(GLIBS)
 else

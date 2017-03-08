@@ -4,3 +4,7 @@ build
 *Dict.*
 # ignore Mac files
 .DS_Store
+#ignore emacs files
+.#*
+#*#
+*.*~

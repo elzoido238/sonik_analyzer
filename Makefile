@@ -14,7 +14,7 @@ FPIC		 = -fPIC
 ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
 INCLUDE		+= -I$(PWD)/include
 
-CXXFLAGS 	+= $(DEBUG) -v $(FPIC) $(INCLUDE)
+CXXFLAGS 	+= $(DEBUG) $(FPIC) $(INCLUDE)
 LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
@@ -50,10 +50,10 @@ $(BUILD)/%.o: $(SDIR)/%.cxx
 $(DICTO): $(DICT)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(OBJS): | $(ODIR)
+$(OBJS): | $(BUILD)
 
-$(ODIR):
-	mkdir $(ODIR)
+$(BUILD):
+	mkdir $(BUILD)
 
 $(LDIR):
 	mkdir $(LDIR)

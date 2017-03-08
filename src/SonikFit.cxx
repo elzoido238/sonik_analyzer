@@ -5,19 +5,18 @@
 ////////////////////////////////////////////////////
 
 #include "SonikFit.hxx"
-ClassImp(SonikFit);
+ClassImp(sonik::SonikFit);
 
+//==================== Class sonik::SonikFit ====================//
 
-//==================== Class SonikFit ====================//
-
-SonikFit(const char* title, Int_t Nevents, Double_t binning)
+sonik::SonikFit::SonikFit(char* title, Int_t Nevents, Double_t binning)
 {
   SetVars(title, Nevents, binning);
 }
 
 // Public member functions
 
-RooFitResult* SonikFit::ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t cutoff, Double_t* range, Bool_t DrawFlag)
+RooFitResult* sonik::SonikFit::ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t cutoff, Double_t* range, Bool_t DrawFlag)
 {
   // construct variable
   RooRealVar x("x","x",0,4);
@@ -62,7 +61,7 @@ RooFitResult* SonikFit::ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t
 }
 
 
-RooFitResult* SonikFit::Exp_3HeBG(TH1D* hh, Double_t peak3, Double_t lambda0, Double_t* range, Bool_t DrawFlag)
+RooFitResult* sonik::SonikFit::Exp_3HeBG(TH1D* hh, Double_t peak3, Double_t lambda0, Double_t* range, Bool_t DrawFlag)
 {
   RooRealVar x("x","x",0,4);
   x.setRange("Rexp",range[0],range[1]);
@@ -100,7 +99,7 @@ RooFitResult* SonikFit::Exp_3HeBG(TH1D* hh, Double_t peak3, Double_t lambda0, Do
 }
 
 
-RooFitResult* SonikFit::ExpBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t lambda0, Double_t* range, Bool_t DrawFlag)
+RooFitResult* sonik::SonikFit::ExpBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t lambda0, Double_t* range, Bool_t DrawFlag)
 {
   RooRealVar x("x","x",0,4);
   x.setRange("Rexp",range[0],range[1]);
@@ -142,7 +141,7 @@ RooFitResult* SonikFit::ExpBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t
 }
 
 
-RooFitResult* SonikFit::LandauBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t* range, Bool_t DrawFlag)
+RooFitResult* sonik::SonikFit::LandauBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t* range, Bool_t DrawFlag)
 {
   RooRealVar x("x","x",0,4);
   x.setRange("Rlandau",range[0],range[1]);
@@ -186,7 +185,7 @@ RooFitResult* SonikFit::LandauBG(TH1D* hh, Double_t peak3, Double_t peak4, Doubl
 }
 
 
-RooFitResult* SonikFit::L_ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t cutoff, Bool_t DrawFlag)
+RooFitResult* sonik::SonikFit::L_ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double_t peakL, Double_t cutoff, Bool_t DrawFlag)
 {
   // construct variable
   RooRealVar x("x","x",0,4);
@@ -238,7 +237,7 @@ RooFitResult* SonikFit::L_ArgBG(TH1D* hh, Double_t peak3, Double_t peak4, Double
 
 // Private member functions
 
-void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooArgusBG bg, Double_t* range)
+void sonik::SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooArgusBG bg, Double_t* range)
 {
   // Make plot of binned dataset showing Poisson error bars (RooFit default)
   RooPlot *frame = x.frame(Title(fTitle));
@@ -267,7 +266,7 @@ void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGauss
 }
 
 
-void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooExponential bg, Double_t* range)
+void sonik::SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooExponential bg, Double_t* range)
 {
   // Make plot of binned dataset showing Poisson error bars (RooFit default)
   RooPlot *frame = x.frame(Title(fTitle));
@@ -291,7 +290,7 @@ void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGauss
 }
 
 
-void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooExponential bg, Double_t* range)
+void sonik::SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooExponential bg, Double_t* range)
 {
   // Make plot of binned dataset showing Poisson error bars (RooFit default)
   RooPlot *frame = x.frame(Title(fTitle));
@@ -314,7 +313,7 @@ void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGauss
 }
 
 
-void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooLandau bg, Double_t* range)
+void sonik::SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooLandau bg, Double_t* range)
 {
   // Make plot of binned dataset showing Poisson error bars (RooFit default)
   RooPlot *frame = x.frame(Title(fTitle));
@@ -338,7 +337,7 @@ void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGauss
 }
 
 
-void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooAddPdf bg)
+void sonik::SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGaussian he3, RooGaussian he4, RooAddPdf bg)
 {
   // Make plot of binned dataset showing Poisson error bars (RooFit default)
   RooPlot *frame = x.frame(Title(fTitle));
@@ -362,7 +361,7 @@ void SonikFit::DrawFrame(RooDataHist dh, RooRealVar x, RooAddPdf model, RooGauss
 }
 
 
-void SonikFit::SetVars(const char* title, Int_t Nevents, Double_t binning)
+void sonik::SonikFit::SetVars(char* title, Int_t Nevents, Double_t binning)
 {
   fTitle   = title;
   fNevents = Nevents;

@@ -1,8 +1,14 @@
-#include "fill_tree.hxx"
+////////////////////////////////////////////////////
+/// Implementation of SonikCal.hxx               ///
+///                                              ///
+/// 03/2017 - Devin Connolly                     ///
+////////////////////////////////////////////////////
+#include "SonikCal.hxx"
+ClassImp(sonik::SonikCal);
 
 
-void fill_tree(vector<int> &runs){
-	
+void sonik::SonikCal::FillTree(vector<int> &runs, const char* runfile, const char* gainfile){
+
 	Int_t adc[MAX_CHANNELS];
 	Double_t pedestal[MAX_CHANNELS];
 
@@ -11,8 +17,8 @@ void fill_tree(vector<int> &runs){
 	cout << gSystem->ExpandPathName(gainfile) << "\n";
 	TFile *fgain = TFile::Open(gSystem->ExpandPathName(gainfile));
 	fgain->cd();
-	
-  TTree *tg = (TTree *)fgain->Get("tg");
+
+	TTree *tg = (TTree *)fgain->Get("tg");
 
 	for(Int_t i = 0; i < MAX_CHANNELS; ++i){
 		tg->GetEntry(i);
@@ -23,28 +29,27 @@ void fill_tree(vector<int> &runs){
 
 	TVectorD *c   = (TVectorD *)fgain->Get("c");
 	Double_t c0   = ((*c))[0];
-	
+
 	cout << "Writing gainmatch tree to file..." << "\n";
 
-  fout->cd();
+	fout->cd();
 	c->Write("c");
-  tg->CloneTree()->Write();
+	tg->CloneTree()->Write();
 
 	cout << "...done!" << "\n";
 
 	fgain->cd(), fgain->Close(), fgain->Delete();
-	
-  // create sonik tree
+
+	// create sonik tree
 	TTree *ts = new TTree("ts","SONIK Energy Spectrum");
-	Sonikcal *sonikcal = new Sonikcal;
-	ts->Branch("sonikcal","Sonikcal",&sonikcal);
+	SonikCal *sonikcal = new SonikCal;
+	ts->Branch("sonikcal","SonikCal",&sonikcal);
 
 	TChain *chain = new TChain("t3");
 
 	cout << "Chaining runs...\n";
 	for(unsigned long i = 0; i < runs.size(); ++i) {
 		char fname[1024];
-		// sprintf(fname, "/home/elzoido238/Desktop/SONIK/S1025/data/rootfiles/run%i.root", i);
 		sprintf(fname, runfile, runs.at(i) );
 		cout << gSystem->ExpandPathName(fname) << "\n";
 		TFile fchain(fname);
@@ -52,7 +57,7 @@ void fill_tree(vector<int> &runs){
 	}
 
 	cout << "...done!\n";
-	
+
 	Double_t val;
 
 	for(Long_t evt = 0; evt < chain->GetEntries(); ++evt){
@@ -68,7 +73,7 @@ void fill_tree(vector<int> &runs){
 	}
 
 	fout->cd();
-	
+
 	cout << "\n Writing sonik tree to file...\n";
 	ts->Write();
 	// fout->Write();
@@ -76,4 +81,11 @@ void fill_tree(vector<int> &runs){
 
 	fout->Close();
 
+}
+
+
+void sonik::SonikCal::reset()
+{
+	std::fill(gainmatched, gainmatched + MAX_CHANNELS, 0);
+	std::fill(ecal, ecal + MAX_CHANNELS, 0);
 }

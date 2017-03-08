@@ -1,20 +1,23 @@
-#include "gainmatch.h"
+////////////////////////////////////////////////////
+/// Implemantaion of Gainmatch.hxx               ///
+///                                              ///
+/// 02/2017 - Devin Connolly                     ///
+////////////////////////////////////////////////////
 
-// macro to gainmatch SONIK detectors
-// D. Connolly
+#include "Gainmatch.hxx"
+ClassImp(sonik::Gainmatch);
 
-void gainmatch(){
+void sonik::Gainmatch::WriteTree(){
 
 	cout << E_peak1[0] << "\t" << E_peak1[1] << "\t" << E_peak1[2] << "\n";
 	cout << E_peak2[0] << "\t" << E_peak2[1] << "\t" << E_peak2[2] << "\n";
-	
 
 	TFile *f = new TFile("gainmatch.root","RECREATE");
 	f->cd();
 
 	// vars for writing rootfile
 	Gainmatch *gm = new Gainmatch;
-	
+
 	TTree *tg = new TTree("tg","Measured and calculated gainmatch parameters");
 	tg->Branch("gm","Gainmatch",&gm);
 
@@ -22,7 +25,7 @@ void gainmatch(){
 	TGraphErrors *gra = new TGraphErrors(Nalpha);
 	char pname[32];
 	char aname[32];
-	
+
 	TVectorD channel(MAX_CHANNELS);
 	TVectorD region(MAX_CHANNELS);
 	TVectorD angle(MAX_CHANNELS);
@@ -31,7 +34,7 @@ void gainmatch(){
 	TVectorD gain(MAX_CHANNELS);
 	TVectorD INL(MAX_CHANNELS);
 	TVectorD c(1);
-	
+
 	Int_t i = 0;
 	Double_t gain_min = pow(2.0,16);
 	Int_t min_chan;
@@ -42,9 +45,9 @@ void gainmatch(){
 	Double_t V[Npulser] = {0.1,0.5,1};
 
 	// for(Int_t i = 0; i < Npulser; ++i){
-	// 	if(i == 0) V[i] = 0;
-	// 	else
-	// 		V[i] = V[i-1] + 1 / (double (Npulser-1));
+	//	if(i == 0) V[i] = 0;
+	//	else
+	//		V[i] = V[i-1] + 1 / (double (Npulser-1));
 	// }
 
 	// open file containing pulser walk and source data
@@ -97,7 +100,7 @@ void gainmatch(){
 				gra->SetPointError(j,0,ua[i][j]);
 			}
 		}
-		
+
 		TFitResultPtr fit2 = gra->Fit("pol1","QS");
 		b2       = fit2->Parameter(0);
 		m2       = fit2->Parameter(1);
@@ -113,7 +116,7 @@ void gainmatch(){
 		// scale all gains to min gain channel
 		if(i == MAX_CHANNELS-1){
 			cout << "Min gain channel = " << min_chan << "\n";
-	
+
 			// scale gains to min gain channel
 			cout << "Channel" << "\t\t" << "Offset" << "\t\t" << "Gain" << "\n";
 			cout << "=======" << "\t\t" << "======" << "\t\t" << "====" << "\n";
@@ -126,7 +129,7 @@ void gainmatch(){
 					g[j]     = gain_min/g[j];
 				}
 				gain[j] = g[j];
-				cout << ch[j] << "\t\t" << os[j] << "\t\t" << g[j] << "\n"; 
+				cout << ch[j] << "\t\t" << os[j] << "\t\t" << g[j] << "\n";
 			}
 		}
 
@@ -171,26 +174,26 @@ void gainmatch(){
 	in.close();
 
 // // Write slopes and offsets to odb
-// 	for(Int_t i=0; i< adc.size(); ++i) {
-// 		gSystem->Exec(Form("odbedit -c \"set /sonik/variables/adc/slope[%d] %.6g\"\n", ch[i], g[i] ) );
-// 		gSystem->Exec(Form("odbedit -c \"set /sonik/variables/adc/offset[%d] %.6g\"\n", ch[i], -os[i]) );
-// 		gSystem->Exec(Form("odbedit -c \"set /dragon/dsssd/variables/adc/slope[%d] %.6g\"\n", ch[i], g[i] ) );
-// 		gSystem->Exec(Form("odbedit -c \"set /dragon/dsssd/variables/adc/offset[%d] %.6g\"\n", ch[i], -os[i] ) );
-// 	}
-// 	cout << "ATTENTION: Gains and offsets written to odb!\n";
+//	for(Int_t i=0; i< adc.size(); ++i) {
+//		gSystem->Exec(Form("odbedit -c \"set /sonik/variables/adc/slope[%d] %.6g\"\n", ch[i], g[i] ) );
+//		gSystem->Exec(Form("odbedit -c \"set /sonik/variables/adc/offset[%d] %.6g\"\n", ch[i], -os[i]) );
+//		gSystem->Exec(Form("odbedit -c \"set /dragon/dsssd/variables/adc/slope[%d] %.6g\"\n", ch[i], g[i] ) );
+//		gSystem->Exec(Form("odbedit -c \"set /dragon/dsssd/variables/adc/offset[%d] %.6g\"\n", ch[i], -os[i] ) );
+//	}
+//	cout << "ATTENTION: Gains and offsets written to odb!\n";
 
 // // Save current odb state to xml file
-// 	gSystem->Exec("odbedit -c 'save -x SONIK_Ecal.xml'"); // save calibration as xml file in pwd
-	
+//	gSystem->Exec("odbedit -c 'save -x SONIK_Ecal.xml'"); // save calibration as xml file in pwd
+
 	// write TVectors
 	c.Write("c");
 	channel.Write("channel");
 	offset.Write("offset");
 	gain.Write("gain");
 	INL.Write("INL");
-	
+
 	// Write root file
-	
+
 	f->Write();
 
 }

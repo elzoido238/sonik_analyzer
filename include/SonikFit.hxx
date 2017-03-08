@@ -13,7 +13,6 @@
 #include "TCanvas.h"
 #include "TObject.h"
 
-
 #ifndef __CINT__
 #include "RooGlobalFunc.h"
 #endif
@@ -36,7 +35,7 @@ using namespace RooFit;
 class RooFitResult;
 class TObject;
 
-//namespace sonik {
+namespace sonik {
 
 class SonikFit : public TObject {
 public:
@@ -63,10 +62,11 @@ private:
   Int_t fNevents;
   Double_t fBinning;
 
-  ClassDef(SonikFit,1)
+  ClassDef(sonik::SonikFit,1)
 };
 
+} // namespace sonik
 
-//} // namespace sonik
+
 
 #endif

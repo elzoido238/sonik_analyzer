@@ -30,7 +30,9 @@
 #pragma link off all functions;
 #pragma link C++ nestedclasses;
 
-#pragma link C++ class SonikFit+;
+#pragma link C++ defined_in sonik;
+#pragma link C++ nestedclass;
+
 //#pragma link C++ class sonik::Gainmatch+;
 //#pragma link C++ class sonik::SonikCal+;
 //#pragma link C++ defined_in ../include/SonikFit.hxx;

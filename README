@@ -1,14 +1,16 @@
 
 Analysis package for SONIK experiments at TRIUMF.
 
-Typing "make" compiles a shared library libSonik.so in lib. This library can be loaded every time a
-root session is run by adding the following lines to your rootlogon.C script:
+Typing "make" compiles a shared library libSonik.so in lib. This library can be loaded
+every time a root session is run by adding the following lines to your rootlogon.C script:
 
   if(!TClass::GetClass("SonikFit"))
     gSystem->Load("${SONIKSYS}/lib/libSonik.so");
 
-It is probably also a good idea to add the following lines in order to use the sonik classes in one's
-own scripts:
+where ${SONIKSYS} is defined in your .bash_profile and/or .bashrc as the directory where
+you installed the sonik_analyzer package (likely ~/packages/sonik/analyzer). It is probably
+also a good idea to add the following lines in order to use the sonik classes in one's own
+scripts:
 
   gInterpreter->AddIncludePath(gSystem->ExpandPathName("${SONIKSYS}/include/"));
   gInterpreter->AddIncludePath(gSystem->ExpandPathName("${SONIKSYS}/lib/"));

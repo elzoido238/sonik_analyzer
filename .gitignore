@@ -8,3 +8,5 @@ build
 .#*
 #*#
 *.*~
+#ignore html dir
+doc/output/

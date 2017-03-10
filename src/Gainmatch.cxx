@@ -64,7 +64,7 @@ void sonik::Gainmatch::WriteTree(){
 
 		// cout << ch[i] << "\t" << ang << "\t" << reg << "\t" << thresh << "\t" << pulse[0] << "\t" << pulse[1] << "\t" << pulse[2] << "\t" << up[0] << "\t" << up[1] << "\t" << up[2] << "\t" << alpha[0] << "\t" << alpha[1] << "\t" << alpha[2] << "\t" << ua[0] << "\t" << ua[1] << "\t" << ua[2] << "\n";
 
-		// ===== pulser data ===== \\
+		// ===== pulser data ===== //
 		// find offset via linear fit of pulser data and set tree values
 		for(Int_t j=0;j<3;j++){
 			grp->SetPoint(j,V[j],pulse[i][j]);
@@ -86,7 +86,7 @@ void sonik::Gainmatch::WriteTree(){
 
 		cout << ch[i] << "\t\t" << os[i] << "\t\t" << nl[i] << "\n";
 
-		// ===== source data =====\\
+		// ===== source data ===== //
 		// find gain via linear fit of source data and set tree values
 		if(ch[i] >= 16 && ch[i] <= 25){// PIPS detectors
 			for(Int_t j=0; j < 3; j++){

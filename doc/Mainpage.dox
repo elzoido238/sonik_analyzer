@@ -1,0 +1,15 @@
+/*!
+  \mainpage
+  \tableofcontents
+
+  \author D. Connolly
+
+  \section intro Introduction
+  This software package is developed for the analysis of data collected in SONIK experiments
+  at TRIUMF. Installation of the sonik analyzer package requires <a href="http://root.cern.ch">ROOT</a>.
+
+ */
+
+// Local Variables:
+// mode: c++
+// End:

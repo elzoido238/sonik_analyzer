@@ -12,9 +12,9 @@ endif
 
 FPIC		 = -fPIC
 ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
-INCLUDE		+= -I$(PWD)/include
+INCLUDE		+= -I$(PWD)/include -I$(DRAGONSYS)/src/utils
 
-CXXFLAGS 	+= $(DEBUG) $(FPIC) $(INCLUDE)
+CXXFLAGS 	+= $(DEBUG) $(FPIC) $(INCLUDE) -v
 LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
@@ -77,3 +77,7 @@ distclean: clean
 
 clean:
 	@rm -f $(SHLIB) $(BUILD)/* $(DICT) $(DICTO) $(DICTH)
+
+######## DOXYGEN ##########
+doc::
+	cd doc; doxygen Doxyfile; cd ..

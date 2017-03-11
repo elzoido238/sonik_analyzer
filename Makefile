@@ -11,11 +11,11 @@ else
 endif
 
 FPIC		 = -fPIC
-ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit
+ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit -lDragon
 INCLUDE		+= -I$(PWD)/include -I$(DRAGONSYS)/src/utils
 
 CXXFLAGS 	+= $(DEBUG) $(FPIC) $(INCLUDE) -v
-LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib
+LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib -L$(DRAGONSYS)/lib
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
 BUILD		:= $(PWD)/build

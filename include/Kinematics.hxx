@@ -18,10 +18,8 @@
 #include "TMath.h"
 #include "TObject.h"
 
-#include "TAtomicMass.h"
 #include "Constants.hxx"
 
-class TAtomicmassTable;
 class Constants;
 
 namespace sonik {
@@ -64,14 +62,16 @@ public:
     Double_t fBetaCM;
     /// Invariant mass of the two-particle system MeV / \f$ c^{2} \f$.
     Double_t fInvariantM;
+    /// Momentum of the center of momentum frame
+    Double_t fp_CM;
     /// Rapidity of the two-particle system.
     Double_t fRapidity;
     /// Scattering angle of the ejectile in the center of momentum frame.
-    Double_t fThetaCM_ej;
+    Double_t fThetaCM_ej[13];
     /// Scattering angle of the (undetected) recoil in the center of momentum frame in degrees.
-    Double_t fThetaCM_rec;
+    Double_t fThetaCM_rec[13];
     /// Scattering angle of the detected recoil in the center of momentum frame in degrees.
-    Double_t fThetaCM_rec_det;
+    Double_t fThetaCM_rec_det[13];
     /// Momentum of the ejectile in the lab frame.
     Double_t fp_ej[13];
     /// Momentum of the recoil in the lab frame.
@@ -81,8 +81,10 @@ public:
     /// Kinetic energy of the recoil in the lab frame in MeV.
     Double_t fT_rec[13];
     /// Laboratory scattering angles for all observation points (in degrees)
-    Double_t fThetaLab = {22.5, 25., 30., 35., 40., 45., 55., 60., 65., 75., 90., 120., 135.};
+    Double_t fThetaLab[13];
   };
+
+  static const Double_t ThetaLab[13];
 
 public:
   Kinematics();
@@ -128,10 +130,10 @@ public: // public member functions
   Double_t ThetaCM_rec_det(Double_t p_CM, Double_t p_rec, Double_t theta_Lab) { return 180*asin( sin(theta_Lab)*p_rec / p_CM) / ( 2*TMath::Pi() ); }
   Scatter_t* GetScatterData(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
   void FillTree(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
-  void WriteTree(const char* fname);
 
 public:
   TTree fScatterTree;
+  TFile* fFile;
 
 private:
   Scatter_t *fScatterBranchAddr;

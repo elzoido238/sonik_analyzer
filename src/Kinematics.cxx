@@ -17,14 +17,14 @@ const Double_t sonik::Kinematics::ThetaLab[13] = {22.5, 25., 30., 35., 40., 45.,
 sonik::Kinematics::Kinematics()
 {
   fScatterTree.SetMarkerStyle(20);
-  fScatterTree.Branch("scat", "dragon::BeamNorm::Scatter", &fScatterBranchAddr);
+  fScatterTree.Branch("scat", "sonik::Kinematics::Scatter_t", &fScatterBranchAddr);
 }
 
 
 sonik::Kinematics::Kinematics(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b, const char* fname)
 {
   fScatterTree.SetMarkerStyle(20);
-  fScatterTree.Branch("scatter", "dragon::BeamNorm::Scatter", &fScatterBranchAddr);
+  fScatterTree.Branch("scatter", "sonik::Kinematics::Scatter_t", &fScatterBranchAddr);
 
   fFile = TFile::Open(fname);
 

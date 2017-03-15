@@ -12,25 +12,17 @@
 
 class TAtomicMassTable;
 
-const Double_t sonik::Kinematics::ThetaLab[13] = {22.5, 25., 30., 35., 40., 45., 55., 65., 75., 90., 120., 135.};
+const Double_t sonik::Kinematics::ThetaLab[12] = {22.5, 25., 30., 35., 40., 45., 55., 65., 75., 90., 120., 135.};
 
 sonik::Kinematics::Kinematics()
 {
-  fScatterTree.SetMarkerStyle(20);
-  fScatterTree.Branch("scat", "sonik::Kinematics::Scatter_t", &fScatterBranchAddr);
+  Init(0,0,0,0,0.0);
 }
 
 
-sonik::Kinematics::Kinematics(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b, const char* fname)
+sonik::Kinematics::Kinematics(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b)
 {
-  fScatterTree.SetMarkerStyle(20);
-  fScatterTree.Branch("scatter", "sonik::Kinematics::Scatter_t", &fScatterBranchAddr);
-
-  fFile = TFile::Open(fname);
-
-  FillTree(Z_b, A_b, Z_t, A_t, T_b);
-
-  fFile->Write();
+  Init(Z_b, A_b, Z_t, A_t, T_b);
 }
 
 
@@ -56,66 +48,52 @@ Double_t sonik::Kinematics::p_rec(Double_t p_CM, Double_t rapidity, Double_t the
 }
 
 
-void sonik::Kinematics::FillTree(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b)
+void sonik::Kinematics::Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b)
 {
 
-  sonik::Kinematics* KIN = new sonik::Kinematics();
-  Scatter_t* scat = KIN->GetScatterData(Z_b, A_b, Z_t, A_t, T_b);
-
-  fScatterTree.Fill();
-
-}
-
-sonik::Kinematics::Scatter_t* sonik::Kinematics::GetScatterData(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b)
-{
   TAtomicMassTable AMT;
-  sonik::Kinematics::Scatter_t *scat;
 
-  fScatterBranchAddr = scat;
-
-  scat->fT_b        = T_b;
-  scat->fVelSquared = T_b / scat->fm_b;
-  scat->fA_b        = A_b;
-  scat->fA_t        = A_t;
-  scat->fZ_b        = Z_b;
-  scat->fZ_t        = Z_t;
-  scat->fDelta_b    = AMT.AtomicMassExcess(Z_b, A_b);
-  scat->fDelta_t    = AMT.AtomicMassExcess(Z_t, A_t);
-  scat->fm_b        = CalcMass(A_b, scat->fDelta_b);
-  scat->fm_t        = CalcMass(A_t, scat->fDelta_t);
+  fT_b        = T_b;
+  fVelSquared = T_b / fm_b;
+  fA_b        = A_b;
+  fA_t        = A_t;
+  fZ_b        = Z_b;
+  fZ_t        = Z_t;
+  fDelta_b    = AMT.AtomicMassExcess(Z_b, A_b) / 1.0e3;
+  fDelta_t    = AMT.AtomicMassExcess(Z_t, A_t) / 1.0e3;
+  fm_b        = CalcMass(A_b, fDelta_b);
+  fm_t        = CalcMass(A_t, fDelta_t);
 
 
   if ( A_t == A_b && Z_t == Z_b ){
     std::cout << "Error: Mott scating is not supported yet! \n";
     exit (EXIT_FAILURE);
   }
-  else if( scat->fm_t < scat->fm_b ){
-    scat->fm_ej  = scat->fm_t;
-    scat->fm_rec = scat->fm_b;
+  else if( fm_t < fm_b ){
+    fm_ej  = fm_t;
+    fm_rec = fm_b;
   }
   else{
-    scat->fm_ej  = scat->fm_b;
-    scat->fm_rec = scat->fm_t;
+    fm_ej  = fm_b;
+    fm_rec = fm_t;
   }
 
-  scat->fGammaLab    = GammaLab(scat->fm_b, T_b);
-  scat->fBetaLab     = BetaLab(scat->fGammaLab);
-  scat->fInvariantM  = InvariantMass(scat->fm_b, scat->fm_t, T_b);
-  scat->fp_CM        = p_CM(scat->fm_b, scat->fm_t, scat->fInvariantM);
-  scat->fRapidity    = Rapidity(scat->fp_CM, scat->fm_t);
-  scat->fGammaCM     = GammaCM(scat->fRapidity);
-  scat->fBetaCM      = BetaLab(scat->fRapidity);
+  fGammaLab    = GammaLab(fm_b, T_b);
+  fBetaLab     = BetaLab(fGammaLab);
+  fInvariantM  = InvariantMass(fm_b, fm_t, T_b);
+  fp_CM        = p_CM(fm_b, fm_t, fInvariantM);
+  fRapidity    = Rapidity(fp_CM, fm_t);
+  fGammaCM     = GammaCM(fRapidity);
+  fBetaCM      = BetaLab(fRapidity);
 
-  for ( Int_t i = 0; i < 13; ++i){
-    scat->fThetaLab[i]        = ThetaLab[i];
-    scat->fp_ej[i]            = p_ej(scat->fp_CM, scat->fRapidity, scat->fThetaLab[i], scat->fm_ej);
-    scat->fp_rec[i]           = p_rec(scat->fp_CM, scat->fRapidity, scat->fThetaLab[i], scat->fm_rec);
-    scat->fT_ej[i]            = T_ej(scat->fp_ej[i], scat->fm_ej);
-    scat->fT_rec[i]           = T_rec(scat->fp_rec[i], scat->fm_rec);
-    scat->fThetaCM_ej[i]      = ThetaCM_ej(scat->fp_CM, scat->fp_ej[i], scat->fThetaLab[i]);
-    scat->fThetaCM_rec[i]     = ThetaCM_rec(scat->fThetaLab[i]);
-    scat->fThetaCM_rec_det[i] = ThetaCM_rec_det(scat->fp_CM, scat->fp_rec[i], scat->fThetaLab[i]);
+  for ( Int_t i = 0; i < 12; ++i){
+    fp_ej[i]            = p_ej(fp_CM, fRapidity, ThetaLab[i], fm_ej);
+    fp_rec[i]           = p_rec(fp_CM, fRapidity, ThetaLab[i], fm_rec);
+    fT_ej[i]            = T_ej(fp_ej[i], fm_ej);
+    fT_rec[i]           = T_rec(fp_rec[i], fm_rec);
+    fThetaCM_ej[i]      = ThetaCM_ej(fp_CM, fp_ej[i], ThetaLab[i]);
+    fThetaCM_rec[i]     = ThetaCM_rec(ThetaLab[i]);
+    fThetaCM_rec_det[i] = ThetaCM_rec_det(fp_CM, fp_rec[i], ThetaLab[i]);
   }
 
-  return scat;
 }

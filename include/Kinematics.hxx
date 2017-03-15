@@ -26,69 +26,66 @@ namespace sonik {
 
 class Kinematics : public TObject {
 public:
-    /// Contains relativistic kinematics data for a scattering reaction of a pair of non-identical particles.
-  struct Scatter_t {
-    /// Atomic number of the beam ion.
-    Int_t fA_b;
-    /// Atomic number of the target ion.
-    Int_t fA_t;
-    /// Proton number of the beam ion.
-    Int_t fZ_b;
-    /// Proton number of the beam ion.
-    Int_t fZ_t;
-    /// Kinetic energy of the beam ion MeV.
-    Double_t fT_b;
-    /// Speed squared of the beam ion MeV / u.
-    Double_t fVelSquared;
-    /// Mass deficit of the beam ion MeV.
-    Double_t fDelta_b;
-    /// Mass deficit of the target ion MeV.
-    Double_t fDelta_t;
-    /// Mass of the beam ion in MeV / \f$ c^{2} \f$.
-    Double_t fm_b;
-    /// Mass of the target ion in MeV / \f$ c^{2} \f$.
-    Double_t fm_t;
-    /// Mass of the ejectile in MeV / \f$ c^{2} \f$.
-    Double_t fm_ej;
-    /// Mass of the recoil in MeV / \f$ c^{2} \f$.
-    Double_t fm_rec;
-    /// Lorentz factor of the beam ions in the lab frame.
-    Double_t fGammaLab;
-    /// Speed of the beam ions (as a fraction of the speed of light \f$\beta\f$) in the lab frame.
-    Double_t fBetaLab;
-    /// Lorentz factor \f$\gamma\f$ of the center of momentum frame.
-    Double_t fGammaCM;
-    /// Speed of the center of momentum frame as a fraction of the speed of light \f$\beta\f$.
-    Double_t fBetaCM;
-    /// Invariant mass of the two-particle system MeV / \f$ c^{2} \f$.
-    Double_t fInvariantM;
-    /// Momentum of the center of momentum frame
-    Double_t fp_CM;
-    /// Rapidity of the two-particle system.
-    Double_t fRapidity;
-    /// Scattering angle of the ejectile in the center of momentum frame.
-    Double_t fThetaCM_ej[13];
-    /// Scattering angle of the (undetected) recoil in the center of momentum frame in degrees.
-    Double_t fThetaCM_rec[13];
-    /// Scattering angle of the detected recoil in the center of momentum frame in degrees.
-    Double_t fThetaCM_rec_det[13];
-    /// Momentum of the ejectile in the lab frame.
-    Double_t fp_ej[13];
-    /// Momentum of the recoil in the lab frame.
-    Double_t fp_rec[13];
-    /// Kinetic energy of the ejectile in the lab frame in MeV.
-    Double_t fT_ej[13];
-    /// Kinetic energy of the recoil in the lab frame in MeV.
-    Double_t fT_rec[13];
-    /// Laboratory scattering angles for all observation points (in degrees)
-    Double_t fThetaLab[13];
-  };
+  /// Laboratory scattering angles for all observation points (in degrees)
+  static const Double_t ThetaLab[12];
 
-  static const Double_t ThetaLab[13];
+public:
+  /// Atomic number of the beam ion.
+  Int_t fA_b;
+  /// Atomic number of the target ion.
+  Int_t fA_t;
+  /// Proton number of the beam ion.
+  Int_t fZ_b;
+  /// Proton number of the beam ion.
+  Int_t fZ_t;
+  /// Kinetic energy of the beam ion MeV.
+  Double_t fT_b;
+  /// Speed squared of the beam ion MeV / u.
+  Double_t fVelSquared;
+  /// Mass deficit of the beam ion MeV.
+  Double_t fDelta_b;
+  /// Mass deficit of the target ion MeV.
+  Double_t fDelta_t;
+  /// Mass of the beam ion in MeV / \f$ c^{2} \f$.
+  Double_t fm_b;
+  /// Mass of the target ion in MeV / \f$ c^{2} \f$.
+  Double_t fm_t;
+  /// Mass of the ejectile in MeV / \f$ c^{2} \f$.
+  Double_t fm_ej;
+  /// Mass of the recoil in MeV / \f$ c^{2} \f$.
+  Double_t fm_rec;
+  /// Lorentz factor of the beam ions in the lab frame.
+  Double_t fGammaLab;
+  /// Speed of the beam ions (as a fraction of the speed of light \f$\beta\f$) in the lab frame.
+  Double_t fBetaLab;
+  /// Lorentz factor \f$\gamma\f$ of the center of momentum frame.
+  Double_t fGammaCM;
+  /// Speed of the center of momentum frame as a fraction of the speed of light \f$\beta\f$.
+  Double_t fBetaCM;
+  /// Invariant mass of the two-particle system MeV / \f$ c^{2} \f$.
+  Double_t fInvariantM;
+  /// Momentum of the center of momentum frame
+  Double_t fp_CM;
+  /// Rapidity of the two-particle system.
+  Double_t fRapidity;
+  /// Scattering angle of the ejectile in the center of momentum frame.
+  Double_t fThetaCM_ej[12];
+  /// Scattering angle of the (undetected) recoil in the center of momentum frame in degrees.
+  Double_t fThetaCM_rec[12];
+  /// Scattering angle of the detected recoil in the center of momentum frame in degrees.
+  Double_t fThetaCM_rec_det[12];
+  /// Momentum of the ejectile in the lab frame.
+  Double_t fp_ej[12];
+  /// Momentum of the recoil in the lab frame.
+  Double_t fp_rec[12];
+  /// Kinetic energy of the ejectile in the lab frame in MeV.
+  Double_t fT_ej[12];
+  /// Kinetic energy of the recoil in the lab frame in MeV.
+  Double_t fT_rec[12];
 
 public:
   Kinematics();
-  Kinematics(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b, const char* fname);
+  Kinematics(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
 
 
 public: // public member functions
@@ -123,20 +120,19 @@ public: // public member functions
   /// Calculate the kinetic energy of the recoil
   Double_t T_rec(Double_t p_rec, Double_t m_rec) { return sqrt(p_rec*p_rec + m_rec*m_rec ) - m_rec; }
   /// Calculate the center of momentum scattering angle of the ejectile (in degrees)
-  Double_t ThetaCM_ej(Double_t p_CM, Double_t p_ej, Double_t theta_Lab) { return 180*asin( sin(theta_Lab)*p_ej / p_CM) / ( 2*TMath::Pi() ); }
+  Double_t ThetaCM_ej(Double_t p_CM, Double_t p_ej, Double_t theta_Lab) { return 180*asin( sin(TMath::Pi()*theta_Lab / 180)*p_ej / p_CM ) / TMath::Pi(); }
   /// Calculate the center of momentum scattering angle of the (undetected) recoil (in degrees)
-  Double_t ThetaCM_rec(Double_t theta_Lab) { return 180*(TMath::Pi() - theta_Lab) / ( 2*TMath::Pi() ); }
+  Double_t ThetaCM_rec(Double_t theta_Lab) { return 180*(TMath::Pi() - TMath::Pi()*theta_Lab / 180 ) / TMath::Pi(); }
   /// Calculate the center of momentum scattering angle of the detected recoil (if applicable)
-  Double_t ThetaCM_rec_det(Double_t p_CM, Double_t p_rec, Double_t theta_Lab) { return 180*asin( sin(theta_Lab)*p_rec / p_CM) / ( 2*TMath::Pi() ); }
-  Scatter_t* GetScatterData(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
-  void FillTree(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
+Double_t ThetaCM_rec_det(Double_t p_CM, Double_t p_rec, Double_t theta_Lab) { return 180*asin( sin(TMath::Pi()*theta_Lab / 180)*p_rec / p_CM ) / TMath::Pi(); }
+  void Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
 
-public:
-  TTree fScatterTree;
-  TFile* fFile;
+// public:
+//   TTree fScatterTree;
+//   TFile* fFile;
 
-private:
-  Scatter_t *fScatterBranchAddr;
+// private:
+//   Scatter_t *fScatterBranchAddr;
 
 private:
   ClassDef(sonik::Kinematics,1)

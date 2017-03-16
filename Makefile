@@ -10,12 +10,14 @@ else
 	include $(ROOTSYS)/etc/Makefile.arch
 endif
 
+DEFINITIONS += -DAMEPP_DEFAULT_FILE=\"$(PWD)/include/mass.mas12\"
 FPIC		 = -fPIC
-ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit -lDragon
-INCLUDE		+= -I$(PWD)/include -I$(DRAGONSYS)/src/utils
+INCLUDE		+= -I$(PWD)/include
+#-I$(DRAGONSYS)/src -I$(DRAGONSYS)/src/utils
 
 CXXFLAGS 	+= $(DEBUG) $(FPIC) $(INCLUDE) -v
 LDFLAGS 	+= -L$(PWD) -L$(ROOTSYS)/lib -L$(DRAGONSYS)/lib
+ROOFITLIBS 	 = -lRooFit -lRooFitCore -lMinuit #-lDragon
 LDFLAGS 	+= $(EXPLLINKLIBS) $(ROOFITLIBS)
 
 BUILD		:= $(PWD)/build

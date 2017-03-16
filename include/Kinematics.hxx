@@ -5,18 +5,15 @@
 //////////////////////////////////////////////////////
 #ifndef HAVE_KINEMATICS_HXX
 #define HAVE_KINEMATICS_HXX
+#include <map>
+#include <memory>
+#include <fstream>
 #ifndef __MAKECINT__
 #include <iostream>
 #endif
 
-#include "TH1.h"
-#include "TCanvas.h"
-#include "TLeaf.h"
-#include "TBranch.h"
-#include "TTree.h"
-#include "TFile.h"
-#include "TMath.h"
-#include "TObject.h"
+// #include <TROOT.h>
+// #include <TObject.h>
 
 #include "Constants.hxx"
 
@@ -24,12 +21,53 @@ class Constants;
 
 namespace sonik {
 
-class Kinematics : public TObject {
+class Kinematics {//: public TObject {
 public:
-  /// Laboratory scattering angles for all observation points (in degrees)
-  static const Double_t ThetaLab[12];
+  Kinematics();
+  Kinematics(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
 
-public:
+public: // public member functions
+  /// Calculate the fraction of the speed of light of the center of momentum frame
+  Double_t GetBetaCM() const { return tanh(fRapidity); }
+  /// Calculate the speed of beam ions (as a fraction of the speed of light) in the lab frame
+  Double_t GetBetaLab() const { return sqrt(1 - 1 / pow(fGammaLab,2) ); }
+  /// Calculate the center of mass energy of the two-particle system
+  Double_t GetE_CM() const { return sqrt(fInvariantM) - (fm_b + fm_t); }
+  /// Calculate the Lorentz factor of the center of momentum frame
+  Double_t GetGammaCM() const { return cosh(fRapidity); }
+  /// Calculate the Lorentz factor of the beam ions in the lab frame
+  Double_t GetGammaLab() const { return fT_b / fm_b + 1; }
+  /// Calculate the invariant mass of the two-particle system
+  Double_t GetInvariantMass() const { return 2*fm_t*fT_b + pow(fm_b + fm_t,2); }
+  /// Calculate the mass of nucleus in MeV / \f$c^2\f$
+  Double_t CalcMass(Int_t A, Double_t Delta) { return A*dragon::Constants::AMU() + Delta; }
+  /// Calculate the maximum scattering angle of the ejectile
+  Double_t GetMaxTheta_ej() const { return asin(fP_CM / (fm_ej*fRapidity)); }
+  /// Calculate the maximum scattering angle of the recoil
+  Double_t GetMaxTheta_rec() const { return asin(fP_CM / (fm_rec*fRapidity)); }
+  /// Calculate the momentum of the center of momentum frame
+  Double_t GetP_CM() const;
+  /// Calculate the rapidity of the two-particle system
+  Double_t GetRapidity() const { return log( (fP_CM + sqrt(fm_b*fm_b + fP_CM*fP_CM)) / fm_b); }
+  /// Calculate the momentum of the ejectile
+  Double_t GetP_ej(Double_t& theta_lab);
+  /// Calculate the momentum of the recoil
+  Double_t GetP_rec(Double_t& theta_lab);
+  /// Calculate the kinetic energy of the ejectile
+  Double_t GetT_ej(Double_t& p_ej) { return sqrt(p_ej*p_ej + fm_ej*fm_ej ) - fm_ej; }
+  /// Calculate the kinetic energy of the recoil
+  Double_t GetT_rec(Double_t& p_rec) { return sqrt(p_rec*p_rec + fm_rec*fm_rec ) - fm_rec; }
+  /// Calculate the center of momentum scattering angle of the ejectile (in degrees)
+  Double_t GetThetaCM_ej(Double_t& p_ej, Double_t& theta_Lab) { return 180*asin( sin(theta_Lab*TMath::Pi() / 180)*p_ej / fP_CM ) / TMath::Pi(); }
+  /// Calculate the center of momentum scattering angle of the (undetected) recoil (in degrees)
+  Double_t GetThetaCM_rec(Double_t& theta_Lab) { return 180*(TMath::Pi() - TMath::Pi()*theta_Lab / 180 ) / TMath::Pi(); }
+  /// Calculate the center of momentum scattering angle of the detected recoil (if applicable)
+  Double_t GetThetaCM_rec_det(Double_t& p_rec, Double_t& theta_Lab) { return 180*asin( sin(TMath::Pi()*theta_Lab / 180)*p_rec / fP_CM ) / TMath::Pi(); }
+
+private:
+  void Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
+
+private:
   /// Atomic number of the beam ion.
   Int_t fA_b;
   /// Atomic number of the target ion.
@@ -65,9 +103,11 @@ public:
   /// Invariant mass of the two-particle system MeV / \f$ c^{2} \f$.
   Double_t fInvariantM;
   /// Momentum of the center of momentum frame
-  Double_t fp_CM;
+  Double_t fP_CM;
   /// Rapidity of the two-particle system.
   Double_t fRapidity;
+  /// Laboratory scattering angles for all observation points (in degrees)
+  Double_t fThetaLab[12];
   /// Scattering angle of the ejectile in the center of momentum frame.
   Double_t fThetaCM_ej[12];
   /// Scattering angle of the (undetected) recoil in the center of momentum frame in degrees.
@@ -75,69 +115,15 @@ public:
   /// Scattering angle of the detected recoil in the center of momentum frame in degrees.
   Double_t fThetaCM_rec_det[12];
   /// Momentum of the ejectile in the lab frame.
-  Double_t fp_ej[12];
+  Double_t fP_ej[12];
   /// Momentum of the recoil in the lab frame.
-  Double_t fp_rec[12];
+  Double_t fP_rec[12];
   /// Kinetic energy of the ejectile in the lab frame in MeV.
   Double_t fT_ej[12];
   /// Kinetic energy of the recoil in the lab frame in MeV.
   Double_t fT_rec[12];
 
-public:
-  Kinematics();
-  Kinematics(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
-
-
-public: // public member functions
-  /// Calculate the fraction of the speed of light of the center of momentum frame
-  Double_t BetaCM(Double_t rapidity) { return tanh(rapidity); }
-  /// Calculate the speed of beam ions (as a fraction of the speed of light) in the lab frame
-  Double_t BetaLab(Double_t gamma_lab) { return sqrt(1 - 1 / pow(gamma_lab,2) ); }
-  /// Calculate the center of mass energy of the two-particle system
-  Double_t E_CM(Double_t S, Double_t m_b, Double_t m_t) { return sqrt(S) - (m_b + m_t); }
-  /// Calculate the Lorentz factor of the center of momentum frame
-  Double_t GammaCM(Double_t rapidity) { return cosh(rapidity); }
-  /// Calculate the Lorentz factor of the beam ions in the lab frame
-  Double_t GammaLab(Double_t m_b, Double_t T_b) { return T_b / m_b + 1; }
-  /// Calculate the invariant mass of the two-particle system
-  Double_t InvariantMass(Double_t m_b, Double_t m_t, Double_t T_b) { return 2*m_t*T_b + pow(m_b + m_t,2); }
-  /// Calculate the mass of nucleus in MeV / \f$c^2\f$
-  Double_t CalcMass(Int_t A, Double_t Delta) { return A*dragon::Constants::AMU() + Delta; }
-  /// Calculate the maximum scattering angle of the ejectile
-  Double_t MaxTheta_ej(Double_t p_CM, Double_t rapidity, Double_t m_ej) { return asin(p_CM / (m_ej*rapidity)); }
-  /// Calculate the maximum scattering angle of the recoil
-  Double_t MaxTheta_rec(Double_t p_CM, Double_t rapidity, Double_t m_rec) { return asin(p_CM / (m_rec*rapidity)); }
-  /// Calculate the momentum of the center of momentum frame
-  Double_t p_CM(Double_t m_b, Double_t m_t, Double_t S);
-  /// Calculate the rapidity of the two-particle system
-  Double_t Rapidity(Double_t p_CM, Double_t m_b) { return log( (p_CM + sqrt(m_b*m_b + p_CM*p_CM)) / m_b); }
-  /// Calculate the momentum of the ejectile
-  Double_t p_ej(Double_t p_CM, Double_t rapidity, Double_t theta_Lab, Double_t m_ej);
-  /// Calculate the momentum of the recoil
-  Double_t p_rec(Double_t p_CM, Double_t rapidity, Double_t theta_Lab, Double_t m_rec);
-  /// Calculate the kinetic energy of the ejectile
-  Double_t T_ej(Double_t p_ej, Double_t m_ej) { return sqrt(p_ej*p_ej + m_ej*m_ej ) - m_ej; }
-  /// Calculate the kinetic energy of the recoil
-  Double_t T_rec(Double_t p_rec, Double_t m_rec) { return sqrt(p_rec*p_rec + m_rec*m_rec ) - m_rec; }
-  /// Calculate the center of momentum scattering angle of the ejectile (in degrees)
-  Double_t ThetaCM_ej(Double_t p_CM, Double_t p_ej, Double_t theta_Lab) { return 180*asin( sin(TMath::Pi()*theta_Lab / 180)*p_ej / p_CM ) / TMath::Pi(); }
-  /// Calculate the center of momentum scattering angle of the (undetected) recoil (in degrees)
-  Double_t ThetaCM_rec(Double_t theta_Lab) { return 180*(TMath::Pi() - TMath::Pi()*theta_Lab / 180 ) / TMath::Pi(); }
-  /// Calculate the center of momentum scattering angle of the detected recoil (if applicable)
-Double_t ThetaCM_rec_det(Double_t p_CM, Double_t p_rec, Double_t theta_Lab) { return 180*asin( sin(TMath::Pi()*theta_Lab / 180)*p_rec / p_CM ) / TMath::Pi(); }
-  void Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b);
-
-// public:
-//   TTree fScatterTree;
-//   TFile* fFile;
-
-// private:
-//   Scatter_t *fScatterBranchAddr;
-
-private:
-  ClassDef(sonik::Kinematics,1)
 };
-
 
 }
 

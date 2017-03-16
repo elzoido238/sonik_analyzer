@@ -9,7 +9,7 @@
 //! \code
 //! #pragma link C++ defined_in /path/to/my/header.hxx;
 //! \endcode
-//! (note that you need to specify the fill path to the header file).
+//! (note that you need to specify the full path to the header file).
 //!
 //! If the above doesn't work, you might have to specify each class (or namespace) individually
 //! (or figure out why not). \n

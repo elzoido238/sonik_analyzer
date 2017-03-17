@@ -1,6 +1,5 @@
 
-Analysis package for SONIK experiments at TRIUMF. Requires ROOT (https://root.cern.ch) and the
-DRAGON analyzer package (https://github.com/dragontriumf/analyzer).
+Analysis package for SONIK experiments at TRIUMF. Requires ROOT (https://root.cern.ch)
 
 After cloning the repository, cd to sonik_analyzer and type "make." This compiles a shared library
 libSonik.so in lib. This library can be loaded every time a root session is run by adding the following
@@ -17,4 +16,4 @@ probably also a good idea to add the following lines in order to use the sonik c
   gInterpreter->AddIncludePath(gSystem->ExpandPathName("${SONIKSYS}/include/"));
   gInterpreter->AddIncludePath(gSystem->ExpandPathName("${SONIKSYS}/lib/"));
 
-Please report bugs to me: dconnolly@triumf.ca
+Please report bugs to dconnolly@triumf.ca

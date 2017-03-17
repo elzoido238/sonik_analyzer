@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include <TMath.h>
+#include <TSystem.h>
 
 #include "TAtomicMass.hxx"
 #include "Kinematics.hxx"
@@ -17,16 +18,17 @@
 class TAtomicMassTable;
 
 
+const Double_t sonik::Kinematics::ThetaLab[13] = {22.5, 25., 30., 35., 40., 45., 55., 60., 65., 75., 90., 120., 135.};
+
+
 sonik::Kinematics::Kinematics()
 {
-  fThetaLab[12] = {22.5, 25., 30., 35., 40., 45., 55., 65., 75., 90., 120., 135.};
   Init(0,0,0,0,0.0);
 }
 
 
 sonik::Kinematics::Kinematics(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b)
 {
-  fThetaLab[12] = {22.5, 25., 30., 35., 40., 45., 55., 65., 75., 90., 120., 135.};
   Init(Z_b, A_b, Z_t, A_t, T_b);
 }
 
@@ -55,7 +57,6 @@ Double_t sonik::Kinematics::GetP_rec(Double_t theta_lab)
 
 void sonik::Kinematics::Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_t T_b)
 {
-
   TAtomicMassTable mt;
 
   fT_b        = T_b;
@@ -78,7 +79,7 @@ void sonik::Kinematics::Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_
   fBetaCM      = GetBetaLab();
 
 
-  if ( A_t == A_b && Z_t == Z_b ){
+  if ( A_t == A_b && Z_t == Z_b && A_t != 0){
     std::cout << "Error: Mott scating is not supported yet! \n";
     exit (EXIT_FAILURE);
   }
@@ -91,14 +92,17 @@ void sonik::Kinematics::Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_
     fm_rec = fm_t;
   }
 
-  for ( Int_t i = 0; i < 12; ++i){
-    fP_ej[i]            = GetP_ej(fThetaLab[i]);
-    fP_rec[i]           = GetP_rec(fThetaLab[i]);
+  Double_t temp;
+
+  for ( Int_t i = 0; i < 13; ++i){
+    temp                = ThetaLab[i];
+    fP_ej[i]            = GetP_ej(temp);
+    fP_rec[i]           = GetP_rec(temp);
     fT_ej[i]            = GetT_ej(fP_ej[i]);
     fT_rec[i]           = GetT_rec(fP_rec[i]);
-    fThetaCM_ej[i]      = GetThetaCM_ej(fP_ej[i], fThetaLab[i]);
-    fThetaCM_rec[i]     = GetThetaCM_rec(fThetaLab[i]);
-    fThetaCM_rec_det[i] = GetThetaCM_rec_det(fP_rec[i], fThetaLab[i]);
+    fThetaCM_ej[i]      = GetThetaCM_ej(fP_ej[i], temp);
+    fThetaCM_rec[i]     = GetThetaCM_rec(temp);
+    fThetaCM_rec_det[i] = GetThetaCM_rec_det(fP_rec[i], temp);
   }
 
 }

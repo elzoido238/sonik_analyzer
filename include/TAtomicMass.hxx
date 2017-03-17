@@ -9,16 +9,11 @@
 #include <memory>
 #include <fstream>
 #include <iostream>
-#ifdef USE_ROOT
 #include <TObject.h>
-#endif
 
 
 /// Class to extract and calculate atomic mass information from an AME file
-class TAtomicMassTable
-#ifdef USE_ROOT
-	: public TObject
-#endif
+class TAtomicMassTable : public TObject
 {
 public:
 	/// Contains information on a nucleus
@@ -138,10 +133,7 @@ private:
 
 private:
 	Map_t fMassData;
-
-#ifdef USE_ROOT
 	ClassDef(TAtomicMassTable, 1);
-#endif
 };
 
 

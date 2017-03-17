@@ -10,6 +10,10 @@ else
 	include $(ROOTSYS)/etc/Makefile.arch
 endif
 
+ifeq ($(PLATFORM),macosx)
+	MACINCLUDE = -I$(ROOTSYS)/include -I$(ROOTSYS)/cint/cint/include
+endif
+
 DEFINITIONS += -DAMEPP_DEFAULT_FILE=\"$(PWD)/include/mass.mas12\"
 FPIC		 = -fPIC
 INCLUDE		+= -I$(PWD)/include
@@ -63,7 +67,11 @@ $(LDIR):
 ######## CINT DICTIONARY ##########
 $(DICT): $(HDRS) $(LINKDEF)
 	@echo "Generating dictionary $@..."
+ifeq ($(PLATFORM),macosx)
+	$(ROOTCINT) -f $@ -c $(MACINCLUDE) $(CXXFLAGS) -p $^
+else
 	$(ROOTCINT) -f $@ -c $(CXXFLAGS) -p $^
+endif
 
 $(SHLIB): $(DICTO) $(OBJS) | $(LDIR)
 ifeq ($(PLATFORM),macosx)
@@ -75,10 +83,10 @@ endif
 .PHONY: clean
 
 distclean: clean
-	@rm -f $(SHLIB) $(BUILD)/* $(DICT) $(DICTO) $(DICTH)
+	rm -f $(SHLIB) $(BUILD)/* $(DICT) $(DICTO) $(DICTH)
 
 clean:
-	@rm -f $(SHLIB) $(BUILD)/* $(DICT) $(DICTO) $(DICTH)
+	rm -f $(SHLIB) $(BUILD)/* $(DICT) $(DICTO) $(DICTH)
 
 ######## DOXYGEN ##########
 doc::

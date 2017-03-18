@@ -41,30 +41,41 @@ Double_t sonik::Kinematics::GetP_CM() const
 
 Double_t sonik::Kinematics::GetP_ej(Double_t theta_lab)
 {
-  return ( cos(theta_lab)*sinh(fRapidity)*sqrt(pow(fm_ej,2) + pow(fP_CM,2)) + cosh(fRapidity)*
-           sqrt(pow(fP_CM,2) - pow(fm_ej*sin(theta_lab)*sinh(fRapidity),2) ) ) /
+  return ( cos(theta_lab)*sinh(fRapidity)*sqrt(pow(fM_ej,2) + pow(fP_CM,2)) + cosh(fRapidity)*
+           sqrt(pow(fP_CM,2) - pow(fM_ej*sin(theta_lab)*sinh(fRapidity),2) ) ) /
     ( 1 + pow(sin(theta_lab)*sinh(fRapidity),2) );
 }
 
 
 Double_t sonik::Kinematics::GetP_rec(Double_t theta_lab)
 {
-  return ( cos(theta_lab)*sinh(fRapidity)*sqrt(fm_rec*fm_rec + fP_CM*fP_CM) + cosh(fRapidity)*
-           sqrt(fP_CM*fP_CM - pow(fm_rec*sin(theta_lab)*sinh(fRapidity),2) ) ) /
+  return ( cos(theta_lab)*sinh(fRapidity)*sqrt(fM_rec*fM_rec + fP_CM*fP_CM) + cosh(fRapidity)*
+           sqrt(fP_CM*fP_CM - pow(fM_rec*sin(theta_lab)*sinh(fRapidity),2) ) ) /
     ( 1 + pow(sin(theta_lab)*sinh(fRapidity),2) );
 }
 
 
 Double_t sonik::Kinematics::GetThetaCM_ej(Double_t& p_ej, Double_t theta_lab)
 {
-  return 180.0*acos( ( p_ej*cos(theta_lab) - sinh(fRapidity)*sqrt(pow(fP_CM,2) + pow(fm_ej,2)) ) /
+  return 180.0*acos( ( p_ej*cos(theta_lab) - sinh(fRapidity)*sqrt(pow(fP_CM,2) + pow(fM_ej,2)) ) /
                      ( fP_CM*cosh(fRapidity) ) ) / TMath::Pi();
 }
 
-Double_t sonik::Kinematics::GetThetaCM_rec_det(Double_t& p_rec, Double_t theta_lab)
+
+Double_t sonik::Kinematics::GetThetaMax_ej() const
 {
-  return 180.0*acos( ( sinh(fRapidity)*sqrt(pow(fP_CM,2) + pow(fm_ej,2)) - p_rec*cos(theta_lab) ) /
-                     ( fP_CM*cosh(fRapidity) ) ) / TMath::Pi();
+  Double_t temp = 180.0*asin(fP_CM / ( fM_ej*sinh(fRapidity) ) ) / TMath::Pi();
+  if (isnan(temp) && fM_b > fM_t ) return 90.0;
+  else if (isnan(temp) && fM_b < fM_t ) return 180.0;
+  else return temp;
+}
+
+
+Double_t sonik::Kinematics::GetThetaMax_rec() const
+{
+  Double_t temp = 180.0*asin( fP_CM / ( fM_rec*sinh(fRapidity) ) ) / TMath::Pi();
+  if (isnan(temp)) return 90.0;
+  else return temp;
 }
 
 
@@ -100,12 +111,12 @@ void sonik::Kinematics::Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_
     exit (EXIT_FAILURE);
   }
   else if( fM_t < fM_b ){
-    fm_ej  = fM_t;
-    fm_rec = fM_b;
+    fM_ej  = fM_t;
+    fM_rec = fM_b;
   }
   else{
-    fm_ej  = fM_b;
-    fm_rec = fM_t;
+    fM_ej  = fM_b;
+    fM_rec = fM_t;
   }
 
   Double_t theta_rad;
@@ -116,9 +127,19 @@ void sonik::Kinematics::Init(Int_t Z_b, Int_t A_b, Int_t Z_t, Int_t A_t, Double_
     fP_rec[i]           = GetP_rec(theta_rad);
     fT_ej[i]            = GetT_ej(fP_ej[i]);
     fT_rec[i]           = GetT_rec(fP_rec[i]);
-    fThetaCM_ej[i]      = GetThetaCM_ej(fP_ej[i], theta_rad);
-    fThetaCM_rec_det[i] = GetThetaCM_rec_det(fP_rec[i], theta_rad);
-    fThetaCM_rec[i]     = GetThetaCM_rec(fThetaCM_ej[i]);
+    fThetaMax_ej        = GetThetaMax_ej();
+    fThetaMax_rec       = GetThetaMax_rec();
+
+    if (ThetaLab[i] <= fThetaMax_ej){
+      fThetaCM_ej[i] = GetThetaCM_ej(fP_ej[i], theta_rad);
+    }
+    else fThetaCM_ej[i] = 0;
+
+    if (ThetaLab[i] <= fThetaMax_rec){
+      fThetaCM_rec[i] = GetThetaCM_rec(theta_rad);
+    }
+    else fThetaCM_rec[i] = 0;
+
   }
 
 }

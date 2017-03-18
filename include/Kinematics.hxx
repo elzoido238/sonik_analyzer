@@ -50,9 +50,9 @@ public:
   /// Mass of the target ion in MeV \f$ c^{-2} \f$.
   Double_t fM_t;
   /// Mass of the ejectile in MeV \f$ c^{-2} \f$.
-  Double_t fm_ej;
+  Double_t fM_ej;
   /// Mass of the recoil in MeV \f$ c^{-2} \f$.
-  Double_t fm_rec;
+  Double_t fM_rec;
   /// Lorentz factor of the beam ions in the lab frame.
   Double_t fGammaLab;
   /// Speed of the beam ions (as a fraction of the speed of light \f$\beta\f$) in the lab frame.
@@ -69,10 +69,12 @@ public:
   Double_t fRapidity;
   /// Scattering angle of the ejectile in the center of momentum frame.
   Double_t fThetaCM_ej[13];
-  /// Scattering angle of the (undetected) recoil in the center of momentum frame in degrees.
+  /// Scattering angle of the (detected) recoil in the center of momentum frame in degrees.
   Double_t fThetaCM_rec[13];
-  /// Scattering angle of the detected recoil in the center of momentum frame in degrees.
-  Double_t fThetaCM_rec_det[13];
+  /// Maximum scattering angle of the ejectile in the lab frame.
+  Double_t fThetaMax_ej;
+  /// Scattering angle of the (detected) recoil in the lab frame in degrees.
+  Double_t fThetaMax_rec;
   /// Momentum of the ejectile in the lab frame.
   Double_t fP_ej[13];
   /// Momentum of the recoil in the lab frame.
@@ -111,19 +113,17 @@ public: // public member functions
   /// Calculate the momentum of the recoil
   Double_t GetP_rec(Double_t theta_lab);
   /// Calculate the kinetic energy of the ejectile
-  Double_t GetT_ej(Double_t& p_ej) { return sqrt(p_ej*p_ej + fm_ej*fm_ej ) - fm_ej; }
+  Double_t GetT_ej(Double_t& p_ej) { return sqrt(p_ej*p_ej + fM_ej*fM_ej ) - fM_ej; }
   /// Calculate the kinetic energy of the recoil
-  Double_t GetT_rec(Double_t& p_rec) { return sqrt(p_rec*p_rec + fm_rec*fm_rec ) - fm_rec; }
+  Double_t GetT_rec(Double_t& p_rec) { return sqrt(p_rec*p_rec + fM_rec*fM_rec ) - fM_rec; }
   /// Calculate the center of momentum scattering angle of the ejectile (in degrees)
   Double_t GetThetaCM_ej(Double_t& p_ej, Double_t theta_lab);
-  /// Calculate the center of momentum scattering angle of the (undetected) recoil (in degrees)
-  Double_t GetThetaCM_rec(Double_t thetaCM_ej) { return 180*(TMath::Pi() - thetaCM_ej) / TMath::Pi(); }
-  /// Calculate the center of momentum scattering angle of the detected recoil (if applicable)
-  Double_t GetThetaCM_rec_det(Double_t& p_rec, Double_t theta_lab);
+  /// Calculate the center of momentum scattering angle of the recoil (in degrees)
+  Double_t GetThetaCM_rec(Double_t theta_lab) { return 180*(TMath::Pi() - 2*theta_lab) / TMath::Pi(); }
   /// Calculate the maximum scattering angle of the ejectile
-  Double_t GetThetaMax_ej() const { return 180.0*asin(fP_CM / ( fm_ej*sinh(fRapidity) ) ) / TMath::Pi(); }
+  Double_t GetThetaMax_ej() const;
   /// Calculate the maximum scattering angle of the recoil
-  Double_t GetThetaMax_rec() const { return 180.0*asin( fP_CM / ( fm_rec*sinh(fRapidity) ) ) / TMath::Pi(); }
+  Double_t GetThetaMax_rec() const;
 
 
 private:

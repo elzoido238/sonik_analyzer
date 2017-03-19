@@ -3,8 +3,8 @@
 /// \author D. Connolly                            ///
 /// \brief Class to claculate kinematics for SONIK ///
 //////////////////////////////////////////////////////
-#ifndef HAVE_KINEMATICS_HXX
-#define HAVE_KINEMATICS_HXX
+#ifndef SONIK_KINEMATICS_HXX
+#define SONIK_KINEMATICS_HXX
 #include <map>
 #include <memory>
 #include <fstream>
@@ -20,6 +20,8 @@
 class Constants;
 
 namespace sonik {
+
+/// \full Class for calculating kinematics for scattering reactions.
 
 class Kinematics {//: public TObject {
 public:

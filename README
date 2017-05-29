@@ -19,3 +19,7 @@ one's own scripts:
   gInterpreter->AddIncludePath(gSystem->ExpandPathName("${SONIKSYS}/lib/"));
 
 Please report bugs to dconnolly@triumf.ca
+
+
+
+test
